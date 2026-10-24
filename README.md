@@ -159,27 +159,27 @@ The following results were recorded against `https://github.com` during developm
 | Header | Status | Notes |
 |---|---|---|
 | `Strict-Transport-Security` | ✅ PRESENT | `max-age=31536000; includeSubdomains; preload` |
-| `Content-Security-Policy` | ❌ MISSING | No CSP header returned — triggers Hardening Recommendation |
+| `Content-Security-Policy` | ✅ PRESENT | Directive sources declared |
 | `X-Content-Type-Options` | ✅ PRESENT | `nosniff` |
 | `X-Frame-Options` | ✅ PRESENT | `deny` |
 | `Referrer-Policy` | ✅ PRESENT | `origin-when-cross-origin, strict-origin-when-cross-origin` |
-| `Permissions-Policy` | ✅ PRESENT | Feature restrictions declared |
+| `Permissions-Policy` | ❌ MISSING | Header not returned — triggers Hardening Recommendation |
 | `Access-Control-Allow-Origin` | ⚠️ NOT SET | No CORS header present (not a wildcard, so not a critical risk) |
 
 **Grade rationale:** 5 of 6 headers present = 83 % ratio → **B**. Zero critical risks (CSP absence alone does not count as a critical header in this audit — only `Strict-Transport-Security` and `Content-Security-Policy` are flagged critical, but the CORS header was absent rather than wildcarded, so the critical risk counter stayed at 0, preventing an **F** floor).
 
 ### Hardening Recommendations produced
 
-Because `Content-Security-Policy` was missing, the scanner surfaced the following directives under the **🔧 Hardening Recommendations** expander:
+Because Permissions-Policy was missing, the scanner surfaced the following directives under the Hardening Recommendations expander:
 
 **Nginx:**
 ```nginx
-add_header Content-Security-Policy "default-src 'self'; script-src 'self'; object-src 'none';" always;
+add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
 ```
 
 **Apache:**
 ```apache
-Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; object-src 'none';"
+Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
 ```
 
 ### Export filenames generated
